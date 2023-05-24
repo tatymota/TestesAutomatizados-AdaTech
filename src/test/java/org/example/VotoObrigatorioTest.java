@@ -2,8 +2,13 @@ package org.example;
 
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.Arguments;
+import org.junit.jupiter.params.provider.CsvSource;
+import org.junit.jupiter.params.provider.MethodSource;
 import org.junit.jupiter.params.provider.ValueSource;
 
+
+import java.util.stream.Stream;
 
 import static org.example.VotoObrigatorio.vote;
 import static org.junit.jupiter.api.Assertions.*;
@@ -35,6 +40,39 @@ class VotoObrigatorioTest {
         assertEquals(votoObrigatorio, vote(idade));
     }
 
+    @ParameterizedTest
+    @CsvSource(value = {
+            "15, Sem direito a votar",
+            "16, Voto facultativo",
+            "17, Voto facultativo",
+            "18, Voto Obrigatório",
+            "30, Voto Obrigatório",
+            "70, Voto Obrigatório",
+            "71, Voto facultativo",
+            "80, Voto facultativo"})
+    void quemPodeVotarCsvSource(int idade, String expected) {
+        String result = vote(idade);
+        assertEquals(result, expected);
+    }
+
+    private static Stream<Arguments> voteConditions() {
+        return Stream.of(
+                Arguments.of(15, "Sem direito a votar"),
+                Arguments.of(16, "Voto facultativo"),
+                Arguments.of(17, "Voto facultativo"),
+                Arguments.of(18, "Voto Obrigatório"),
+                Arguments.of(30, "Voto Obrigatório"),
+                Arguments.of(70, "Voto Obrigatório"),
+                Arguments.of(71, "Voto facultativo"),
+                Arguments.of(80, "Voto facultativo")
+        );
+    }
+    @ParameterizedTest
+    @MethodSource("voteConditions")
+    public void testMethodSourceVoto (int idade, String expected){
+        String result = VotoObrigatorio.vote(idade);
+        assertEquals(result, expected);
+    }
 
 
 
@@ -69,7 +107,6 @@ class VotoObrigatorioTest {
     }
 }
 
-//----------------------------------------------------
 
 
 
